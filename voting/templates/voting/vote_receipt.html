@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-body text-center">
+
+            <h2 class="text-success mb-3">🎉 Vote Successful!</h2>
+            <p class="text-muted">Thank you for supporting your favorite contestant.</p>
+
+            <hr>
+
+            <div class="text-start mt-4">
+                <p><strong>Event:</strong> {{ vote.contestant.category.event.title }}</p>
+                <p><strong>Category:</strong> {{ vote.contestant.category.name }}</p>
+                <p><strong>Contestant:</strong> {{ vote.contestant.name }}</p>
+                <p><strong>Phone Number:</strong> {{ vote.phone_number }}</p>
+                <p><strong>Amount Paid:</strong> GHS {{ vote.amount }}</p>
+                <p><strong>Votes Given:</strong> {{ vote.votes }}</p>
+                <p><strong>Transaction ID:</strong> {{ vote.transaction_id }}</p>
+                <p><strong>Status:</strong> 
+                    <span class="badge bg-success">{{ vote.status }}</span>
+                </p>
+                <p><strong>Date:</strong> {{ vote.timestamp }}</p>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'contestant_list' vote.contestant.category.event.id %}" 
+                   class="btn btn-primary">
+                    🔙 Back to Contestants
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

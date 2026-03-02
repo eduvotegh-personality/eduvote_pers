@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Active Elections{% endblock %}
+
+{% block content %}
+
+<h1 class="text-center mb-5">🗳️ Active Elections</h1>
+
+{% if events %}
+    <div class="row">
+        {% for event in events %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+
+                {% if event.banner %}
+                    <img src="{{ event.banner.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                {% endif %}
+
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ event.title }}</h5>
+
+                    <p>
+                        <strong>Ends:</strong><br>
+                        {{ event.end_time }}
+                    </p>
+
+                    <a href="{% url 'contestant_list' event.id %}" 
+                       class="btn btn-primary w-100">
+                        View Contestants
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info text-center">
+        No active elections at the moment.
+    </div>
+{% endif %}
+
+{% endblock %}

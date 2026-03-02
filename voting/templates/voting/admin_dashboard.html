@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <!-- Logout Button -->
+    <div class="d-flex justify-content-end mb-3">
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                🚪 Logout
+            </button>
+        </form>
+    </div>
+
+    <!-- Page Title -->
+    <h1 class="mb-4 text-center">📊 EduVote Admin Dashboard</h1>
+
+    <!-- Event Tabs -->
+    <ul class="nav nav-tabs mb-4 justify-content-center">
+        {% for event in events %}
+            <li class="nav-item">
+                <a class="nav-link {% if event == selected_event %}active{% endif %}"
+                   href="?event_id={{ event.id }}">
+                    {{ event.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-5">
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3">
+                <h5>Total Revenue</h5>
+                <h3 class="text-success">GHS {{ total_revenue }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3">
+                <h5>Total Votes</h5>
+                <h3>{{ total_votes }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card shadow p-3">
+                <h5>Total Contestants</h5>
+                <h3>{{ total_contestants }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Leaderboard -->
+    <h3 class="mb-3">🏆 Leaderboard</h3>
+    <table class="table table-bordered bg-white shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Total Votes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contestant in leaderboard %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ contestant.name }}</td>
+                <td>{{ contestant.total_votes }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No contestants found for this event.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Recent Votes -->
+    <h3 class="mt-5 mb-3">🧾 Recent Votes</h3>
+    <table class="table table-striped bg-white shadow-sm">
+        <thead>
+            <tr>
+                <th>Phone</th>
+                <th>Contestant</th>
+                <th>Amount</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vote in recent_votes %}
+            <tr>
+                <td>{{ vote.phone_number }}</td>
+                <td>{{ vote.contestant.name }}</td>
+                <td>GHS {{ vote.amount }}</td>
+                <td>{{ vote.timestamp }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No votes yet for this event.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>

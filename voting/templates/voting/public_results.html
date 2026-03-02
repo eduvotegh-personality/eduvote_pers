@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Live Results - {{ event.title }}{% endblock %}
+
+{% block content %}
+
+<div class="text-center mb-4">
+    <h2 class="fw-bold">{{ event.title }}</h2>
+    <p class="text-muted">Live Voting Results</p>
+</div>
+
+{% for category in categories %}
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">🏆 {{ category.name }}</h5>
+    </div>
+
+    <div class="card-body">
+
+        {% for contestant in category.contestants.all|dictsortreversed:"total_votes" %}
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <span>
+                {% if forloop.counter == 1 %} 🥇
+                {% elif forloop.counter == 2 %} 🥈
+                {% elif forloop.counter == 3 %} 🥉
+                {% endif %}
+                {{ contestant.name }}
+            </span>
+
+            <span class="badge bg-primary">
+                {{ contestant.total_votes }} Votes
+            </span>
+        </div>
+
+        {% empty %}
+            <p>No contestants in this category.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% empty %}
+    <p class="text-center">No categories found.</p>
+{% endfor %}
+
+{% endblock %}

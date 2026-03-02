@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy | EduVote{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container" style="max-width: 900px;">
+
+        <h1 class="mb-4">Privacy Policy</h1>
+
+        <p class="text-muted">
+            Last Updated: {% now "F Y" %}
+        </p>
+
+        <hr>
+
+        <h4 class="mt-4">1. Information We Collect</h4>
+        <p>
+            We may collect personal information such as mobile numbers,
+            payment confirmations, and voting activity required to
+            facilitate secure elections.
+        </p>
+
+        <h4 class="mt-4">2. How We Use Your Information</h4>
+        <p>
+            Your information is used strictly for:
+        </p>
+        <ul>
+            <li>Processing votes</li>
+            <li>Preventing fraud and spam voting</li>
+            <li>Generating analytics and reports</li>
+            <li>Improving system performance</li>
+        </ul>
+
+        <h4 class="mt-4">3. Data Security</h4>
+        <p>
+            We implement advanced fraud detection systems,
+            encrypted transactions, and secure data handling
+            to protect your information.
+        </p>
+
+        <h4 class="mt-4">4. Data Sharing</h4>
+        <p>
+            We do not sell, trade, or rent user information
+            to third parties.
+        </p>
+
+        <h4 class="mt-4">5. Contact Us</h4>
+        <p>
+            If you have any questions regarding this Privacy Policy,
+            please contact us via the Contact page.
+        </p>
+
+    </div>
+</section>
+
+{% endblock %}
