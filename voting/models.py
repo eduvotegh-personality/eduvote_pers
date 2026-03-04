@@ -1,12 +1,16 @@
 from django.db import models
 from django.utils import timezone
-from django.db import models
+
 import uuid
 
 from django.utils import timezone
 
 from django.utils import timezone
 from django.db import models
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
@@ -39,6 +43,7 @@ class Category(models.Model):
     def __str__(self):
         return f"{self.event.title} - {self.name}"
 
+
 class Contestant(models.Model):
     category = models.ForeignKey(
         Category,
@@ -51,6 +56,32 @@ class Contestant(models.Model):
     bio = models.TextField(blank=True)
 
     total_votes = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            img = Image.open(self.photo)
+
+            # Convert to RGB (important for PNGs)
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+
+            # Resize (max 800x800)
+            img.thumbnail((800, 800))
+
+            buffer = BytesIO()
+            img.save(buffer, format="JPEG", quality=70)
+            buffer.seek(0)
+
+            self.photo = InMemoryUploadedFile(
+                buffer,
+                "ImageField",
+                f"{self.photo.name.split('.')[0]}.jpg",
+                "image/jpeg",
+                sys.getsizeof(buffer),
+                None
+            )
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} - {self.category.name}"
