@@ -11,6 +11,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
+import uuid
 
 
 class Event(models.Model):
