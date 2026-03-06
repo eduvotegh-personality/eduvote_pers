@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 DEBUG = os.environ.get("RENDER") != "true"
 
 if DEBUG:
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost",]
 else:
     ALLOWED_HOSTS = [".onrender.com"]
 
@@ -176,3 +176,4 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 SITE_URL = "http://127.0.0.1:8000"
+

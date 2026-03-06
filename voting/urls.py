@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path('', views.homepage, name='homepage'),   # NEW homepage
     path('events/', views.event_list, name='event_list'),  # Active elections
@@ -17,4 +18,5 @@ urlpatterns = [
     path("payment/initiate/<int:contestant_id>/", views.initiate_payment, name="initiate_payment"),
     path("payment/processing/<uuid:reference>/", views.payment_processing, name="payment_processing"),
     path("payment/verify/<uuid:reference>/", views.verify_payment, name="verify_payment"),
+    path("contact/", views.contact, name="contact"),
 ]

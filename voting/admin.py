@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Category, Contestant, Vote, Payment
+from .models import Event, Category, Contestant, Vote, Payment, ContactMessage
 
 
 @admin.register(Event)
@@ -30,3 +30,32 @@ class VoteAdmin(admin.ModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ("contestant", "amount", "status", "reference", "created_at")
     list_filter = ("status",)
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+
+    list_display = ("name", "email", "subject", "status", "created_at")
+
+    list_filter = ("status", "created_at")
+
+    search_fields = ("name", "email", "subject")
+
+    list_editable = ("status",)
+
+    readonly_fields = ("name", "email", "phone", "subject", "message", "created_at")
+
+    fieldsets = (
+        ("Client Information", {
+            "fields": ("name", "email", "phone")
+        }),
+        ("Request", {
+            "fields": ("subject", "message")
+        }),
+        ("CRM Status", {
+            "fields": ("status",)
+        }),
+        ("System Info", {
+            "fields": ("created_at",)
+        }),
+    )

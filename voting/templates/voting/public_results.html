@@ -4,65 +4,206 @@
 
 {% block content %}
 
-<div class="text-center mb-4">
-    <h2 class="fw-bold">{{ event.title }}</h2>
-    <p class="text-muted">Live Voting Results</p>
+<style>
+
+/* PAGE HEADER */
+
+.results-header{
+text-align:center;
+margin-bottom:40px;
+}
+
+.results-title{
+font-weight:700;
+letter-spacing:1px;
+}
+
+.results-subtitle{
+color:#6c757d;
+}
+
+/* CATEGORY CARD */
+
+.results-card{
+border:none;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.06);
+overflow:hidden;
+}
+
+.results-card-header{
+background:#0b1e3c;
+color:white;
+padding:14px 18px;
+font-weight:600;
+}
+
+/* CONTESTANT ROW */
+
+.result-row{
+padding:18px 0;
+border-bottom:1px solid #f0f0f0;
+}
+
+.result-row:last-child{
+border-bottom:none;
+}
+
+.contestant-name{
+font-weight:600;
+font-size:16px;
+}
+
+.contestant-code{
+font-size:13px;
+color:#6c757d;
+}
+
+/* VOTE BADGE */
+
+.vote-badge{
+background:#c8102e;
+font-weight:600;
+}
+
+/* PROGRESS BAR */
+
+.progress{
+height:10px;
+border-radius:20px;
+background:#e9ecef;
+}
+
+.progress-bar{
+background:linear-gradient(90deg,#c8102e,#ff4b5c);
+}
+
+/* LEADER HIGHLIGHT */
+
+.leader{
+background:#f9fafb;
+border-radius:10px;
+padding:10px;
+}
+
+/* MOBILE */
+
+@media(max-width:576px){
+
+.result-row{
+padding:14px 0;
+}
+
+.contestant-name{
+font-size:15px;
+}
+
+}
+
+</style>
+
+
+<div class="results-header">
+
+<h2 class="results-title">{{ event.title }}</h2>
+
+<p class="results-subtitle">
+Live Voting Results
+</p>
+
 </div>
+
 
 {% for category in categories %}
 
-<div class="card shadow mb-4">
-    <div class="card-header bg-dark text-white">
-        <h5 class="mb-0">🏆 {{ category.name }}</h5>
-    </div>
+<div class="card results-card mb-4">
 
-    <div class="card-body">
+<div class="results-card-header">
+🏆 {{ category.name }}
+</div>
 
-        {% for contestant in category.contestants.all|dictsortreversed:"total_votes" %}
+<div class="card-body">
 
-        <div class="border-bottom py-3">
 
-            <div class="d-flex justify-content-between align-items-center">
+{% for contestant in category.contestants.all|dictsortreversed:"total_votes" %}
 
-                <div>
-                    {% if forloop.counter == 1 %} 🥇
-                    {% elif forloop.counter == 2 %} 🥈
-                    {% elif forloop.counter == 3 %} 🥉
-                    {% endif %}
+<div class="result-row {% if forloop.counter == 1 %}leader{% endif %}">
 
-                    <strong>{{ contestant.name }}</strong><br>
-                    <small class="text-muted">Code: {{ contestant.code }}</small>
-                </div>
+<div class="d-flex justify-content-between align-items-center">
 
-                <div class="text-end">
-                    <span class="badge bg-primary">
-                        {{ contestant.total_votes }} Votes
-                    </span><br>
-                    <small class="text-success fw-bold">
-                        {{ contestant.percentage }}%
-                    </small>
-                </div>
+<div>
 
-            </div>
+{% if forloop.counter == 1 %} 🥇
+{% elif forloop.counter == 2 %} 🥈
+{% elif forloop.counter == 3 %} 🥉
+{% endif %}
 
-            <div class="progress mt-2" style="height: 8px;">
-                <div class="progress-bar bg-success"
-                     role="progressbar"
-                     style="width: {{ contestant.percentage }}%;">
-                </div>
-            </div>
+<span class="contestant-name">
+{{ contestant.name }}
+</span>
 
-        </div>
+<br>
 
-        {% empty %}
-            <p>No contestants in this category.</p>
-        {% endfor %}
+<span class="contestant-code">
+Code: {{ contestant.code }}
+</span>
 
-    </div>
+</div>
+
+<div class="text-end">
+
+<span class="badge vote-badge">
+{{ contestant.total_votes }} Votes
+</span>
+
+<br>
+
+<small class="text-success fw-bold">
+{{ contestant.percentage }}%
+</small>
+
+</div>
+
+</div>
+
+
+<div class="progress mt-2">
+
+<div class="progress-bar"
+role="progressbar"
+style="width: {{ contestant.percentage }}%;">
+
+</div>
+
+</div>
+
 </div>
 
 {% empty %}
-    <p class="text-center">No categories found.</p>
+
+<p>No contestants in this category.</p>
+
 {% endfor %}
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p class="text-center">No categories found.</p>
+
+{% endfor %}
+
+
+<script>
+
+/* AUTO REFRESH RESULTS EVERY 15 SECONDS */
+
+setTimeout(function(){
+location.reload();
+},15000);
+
+</script>
 
 {% endblock %}

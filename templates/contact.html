@@ -4,57 +4,114 @@
 {% block content %}
 
 <section class="py-5">
-    <div class="container">
+<div class="container">
 
-        <div class="text-center mb-5">
-            <h1 class="fw-bold">Contact Us</h1>
-            <p class="text-muted">
-                We'd love to hear from you. Reach out for partnerships,
-                support, or to launch your election.
-            </p>
+<div class="text-center mb-5">
+<h1 class="fw-bold">Contact EduVote</h1>
+<p class="text-muted">
+For partnerships, election setup, or technical support, send us a message and our team will respond promptly.
+</p>
+</div>
+
+<div class="row g-4">
+
+<!-- CONTACT INFORMATION -->
+<div class="col-md-5">
+<div class="card shadow border-0 h-100">
+
+<div class="card-body p-4">
+
+<h4 class="mb-4 fw-bold">📍 Our Office</h4>
+
+<p class="text-muted">
+EduVote Headquarters<br>
+No. 18 Treser Street<br>
+Gbawe – Telecom<br>
+Accra, Ghana
+</p>
+
+<hr>
+
+<h5 class="fw-bold">📞 Phone</h5>
+<p class="text-muted">+233 545133351</p>
+
+<h5 class="fw-bold">✉ Email</h5>
+<p class="text-muted">eduvote.gh@gmail.com</p>
+
+<h5 class="fw-bold">💬 WhatsApp</h5>
+<p class="text-muted">+233 545133351</p>
+
+<hr>
+
+<p class="small text-muted">
+Our team typically responds within 24 hours.
+</p>
+
+</div>
+</div>
+</div>
+
+<!-- CONTACT FORM -->
+<div class="col-md-7">
+<div class="card shadow border-0">
+
+<div class="card-body p-4">
+
+<h4 class="fw-bold mb-4">Send us a Message</h4>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
         </div>
+    {% endfor %}
+{% endif %}
 
-        <div class="row">
+<form method="POST" action="{% url 'contact' %}">
+    {% csrf_token %}
 
-            <!-- CONTACT INFO -->
-            <div class="col-md-5 mb-4">
-                <div class="card shadow-sm p-4 h-100 border-0">
-                    <h4 class="mb-3">📍 Our Office</h4>
-                    <p class="text-muted">
-                        EduVote Headquarters<br>
-                        No. 18 Treser Street<br>
-                        Gbawe - Telecom.
+<div class="row">
 
-                    </p>
+<div class="col-md-6 mb-3">
+<label class="form-label">Full Name</label>
+<input type="text" name="name" class="form-control" required>
+</div>
 
-                    <h5 class="mt-4">📞 Phone</h5>
-                    <p class="text-muted">+233 545133351</p>
+<div class="col-md-6 mb-3">
+<label class="form-label">Email Address</label>
+<input type="email" name="email" class="form-control" required>
+</div>
 
-                    <h5 class="mt-4">✉ Email</h5>
-                    <p class="text-muted">eduvote.gh@gmail.com</p>
+</div>
 
-                    <h5 class="mt-4">WhatsApp</h5>
-                    <p class="text-muted">+233 545133351</p>
-                </div>
-            </div>
+<div class="mb-3">
+<label class="form-label">Phone Number</label>
+<input type="text" name="phone" class="form-control">
+</div>
 
-            <!-- GOOGLE MAP -->
-            <div class="col-md-7 mb-4">
-                <div class="card shadow-sm border-0">
-                    <iframe
-                        src="https://www.google.com/maps?q=18+Treser+Street+Gbawe+Telecom,+Ghana&output=embed"
-                        width="100%"
-                        height="400"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy">
-                    </iframe>
-                </div>
-            </div>
+<div class="mb-3">
+<label class="form-label">Subject</label>
+<input type="text" name="subject" class="form-control" required>
+</div>
 
-        </div>
+<div class="mb-4">
+<label class="form-label">Message</label>
+<textarea name="message" rows="6" class="form-control" required></textarea>
+</div>
 
-    </div>
+<button class="btn btn-danger w-100 py-2 fw-bold">
+Send Message
+</button>
+
+</form>
+
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
 </section>
 
 {% endblock %}

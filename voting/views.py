@@ -22,6 +22,10 @@ from .models import Contestant, Payment
 from django.conf import settings
 import requests
 
+from .models import ContactMessage
+from django.contrib import messages
+from django.core.mail import send_mail
+
 
 def event_list(request):
     now = timezone.now()
@@ -167,9 +171,6 @@ def homepage(request):
 def about(request):
     return render(request, "about.html")
 
-def contact(request):
-    return render(request, "contact.html")
-
 def privacy_policy(request):
     return render(request, "privacy_policy.html")
 
@@ -227,3 +228,46 @@ def verify_payment(request, reference):
     payment.contestant.save()
 
     return redirect("vote_success")
+
+def contact(request):
+
+    if request.method == "POST":
+
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        # Save message
+        ContactMessage.objects.create(
+            name=name,
+            email=email,
+            phone=phone,
+            subject=subject,
+            message=message
+        )
+
+        # Send Email Notification
+        send_mail(
+            subject=f"New EduVote Contact: {subject}",
+            message=f"""
+New Contact Message
+
+Name: {name}
+Email: {email}
+Phone: {phone}
+
+Message:
+{message}
+""",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=["eduvote.gh@gmail.com"],
+            fail_silently=True,
+        )
+
+        messages.success(request, "✅ Your message has been sent successfully!")
+
+        return redirect("contact")
+
+    return render(request, "contact.html")

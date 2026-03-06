@@ -138,3 +138,29 @@ class Payment(models.Model):
     def __str__(self):
         return f"{self.reference} - {self.status}"
 
+class ContactMessage(models.Model):
+
+    STATUS_CHOICES = [
+        ("New", "New"),
+        ("Contacted", "Contacted"),
+        ("Proposal Sent", "Proposal Sent"),
+        ("Closed", "Closed"),
+    ]
+
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="New"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
