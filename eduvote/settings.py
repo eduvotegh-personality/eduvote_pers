@@ -33,7 +33,7 @@ DEBUG = os.environ.get("RENDER") != "true"
 if DEBUG:
     ALLOWED_HOSTS = ["127.0.0.1", "localhost",]
 else:
-    ALLOWED_HOSTS = [".onrender.com"]
+    ALLOWED_HOSTS = ["eduvote-perssonality.onrender.com", ".onrender.com"]
 
 
 # Application definition
@@ -175,8 +175,4 @@ cloudinary.config(
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
-SITE_URL = "http://127.0.0.1:8000"
-
-STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+SITE_URL = "https://eduvote-perssonality.onrender.com"
