@@ -23,4 +23,3 @@ if username and email and password:
     else:
         print("Superuser already exists.")
 END
-3️⃣ A
