@@ -177,3 +177,6 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 SITE_URL = "http://127.0.0.1:8000"
 
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
