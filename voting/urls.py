@@ -22,4 +22,5 @@ urlpatterns = [
     path("payment/verify/<str:reference>/", views.verify_payment, name="verify_payment"),
     path("vote-success/", views.vote_success, name="vote_success"),
     path("dashboard/live-data/", views.dashboard_live_data, name="dashboard_live_data"),
+    path("payment/webhook/", views.paystack_webhook, name="paystack_webhook"),
 ]

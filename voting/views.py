@@ -35,6 +35,12 @@ from .models import Event, Contestant, Payment
 from django.shortcuts import render
 from django.http import JsonResponse
 
+import json
+import hmac
+import hashlib
+
+
+
 def event_list(request):
     now = timezone.now()
     events = Event.objects.filter(end_date__gt=now).order_by('end_date')
@@ -381,3 +387,42 @@ def dashboard_live_data(request):
         "leaderboard": leaderboard,
         "recent_votes": recent_votes
     })
+
+
+def paystack_webhook(request):
+
+    payload = request.body
+    signature = request.headers.get("x-paystack-signature")
+
+    # verify Paystack signature
+    computed_signature = hmac.new(
+        settings.PAYSTACK_SECRET_KEY.encode(),
+        payload,
+        hashlib.sha512
+    ).hexdigest()
+
+    if signature != computed_signature:
+        return HttpResponse(status=400)
+
+    event = json.loads(payload)
+
+    if event["event"] == "charge.success":
+
+        reference = event["data"]["reference"]
+
+        try:
+            payment = Payment.objects.get(reference=reference)
+
+            if payment.status != "successful":
+
+                payment.status = "successful"
+                payment.save()
+
+                contestant = payment.contestant
+                contestant.total_votes += payment.votes
+                contestant.save()
+
+        except Payment.DoesNotExist:
+            pass
+
+    return HttpResponse(status=200)
