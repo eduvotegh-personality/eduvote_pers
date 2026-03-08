@@ -19,7 +19,7 @@ urlpatterns = [
 
     path("payment/initiate/<int:contestant_id>/", views.initiate_payment, name="initiate_payment"),
     path("payment/processing/<uuid:reference>/", views.payment_processing, name="payment_processing"),
-    path("payment/verify/<str:reference>/", views.verify_payment, name="verify_payment"),
+    path("payment/verify/<uuid:reference>/", views.verify_payment, name="verify_payment"),
     path("vote-success/", views.vote_success, name="vote_success"),
     path("dashboard/live-data/", views.dashboard_live_data, name="dashboard_live_data"),
     path("payment/webhook/", views.paystack_webhook, name="paystack_webhook"),

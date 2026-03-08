@@ -268,7 +268,7 @@ def payment_processing(request, reference):
 
 def verify_payment(request, reference):
 
-    payment = get_object_or_404(Payment, reference=reference)
+    payment = get_object_or_404(Payment, reference=str(reference))
 
     verify_url = f"https://api.paystack.co/transaction/verify/{reference}"
 
