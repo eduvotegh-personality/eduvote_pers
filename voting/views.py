@@ -261,6 +261,7 @@ def payment_processing(request, reference):
 
 
 def verify_payment(request, reference):
+
     payment = get_object_or_404(Payment, reference=reference)
 
     verify_url = f"https://api.paystack.co/transaction/verify/{reference}"
@@ -270,27 +271,39 @@ def verify_payment(request, reference):
     }
 
     try:
-        response = requests.get(verify_url, headers=headers)
+        response = requests.get(verify_url, headers=headers, timeout=30)
         response_data = response.json()
-    except:
+    except requests.exceptions.RequestException:
+        messages.error(request, "Payment verification failed. Please contact support.")
         return redirect("home")
 
-    if response_data.get("status"):
-        data = response_data.get("data")
+    if not response_data.get("status"):
+        messages.error(request, "Payment verification error.")
+        return redirect("home")
 
-        if data["status"] == "success" and payment.status != "successful":
+    data = response_data["data"]
 
-            # mark payment successful
+    # Payment was successful
+    if data["status"] == "success":
+
+        if payment.status != "successful":
+
             payment.status = "successful"
             payment.save()
 
-            # add votes
             contestant = payment.contestant
             contestant.total_votes += payment.votes
             contestant.save()
 
-            return redirect("vote_success")
+        return redirect("vote_success")
 
+    # Payment abandoned or failed
+    if data["status"] in ["failed", "abandoned"]:
+        messages.error(request, "Payment was not completed.")
+        return redirect("home")
+
+    # Pending payments
+    messages.warning(request, "Payment is still processing. Please wait.")
     return redirect("home")
 
 def contact(request):
