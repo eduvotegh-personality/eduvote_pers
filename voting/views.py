@@ -197,6 +197,7 @@ def terms_of_service(request):
 
 
 def initiate_payment(request, contestant_id):
+
     contestant = get_object_or_404(Contestant, id=contestant_id)
 
     if request.method == "POST":
@@ -207,6 +208,7 @@ def initiate_payment(request, contestant_id):
 
         votes = int(amount)
 
+        # create payment record
         payment = Payment.objects.create(
             contestant=contestant,
             phone=phone,
@@ -215,31 +217,41 @@ def initiate_payment(request, contestant_id):
             status="pending"
         )
 
-        paystack_url = "https://api.paystack.co/transaction/initialize"
+        url = "https://api.paystack.co/transaction/initialize"
 
         headers = {
             "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
             "Content-Type": "application/json",
         }
 
-        data = {
+        callback_url = f"{settings.SITE_URL}/payment/verify/{payment.reference}/"
+
+        payload = {
             "email": email,
-            "amount": int(amount * 100),
+            "amount": int(amount * 100),  # convert to kobo
             "reference": str(payment.reference),
-            "callback_url": f"{settings.SITE_URL}/payment/verify/{payment.reference}/",
+            "callback_url": callback_url,
+            "metadata": {
+                "contestant_id": contestant.id,
+                "phone": phone,
+                "votes": votes,
+            }
         }
 
         try:
-            response = requests.post(paystack_url, json=data, headers=headers)
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
             response_data = response.json()
-        except:
-            return HttpResponse("Payment initialization failed")
+        except requests.exceptions.RequestException:
+            return HttpResponse("Unable to reach payment gateway. Try again.")
 
         if response_data.get("status"):
-            payment_url = response_data["data"]["authorization_url"]
-            return redirect(payment_url)
 
-        return HttpResponse(response_data)
+            payment.authorization_url = response_data["data"]["authorization_url"]
+            payment.save()
+
+            return redirect(response_data["data"]["authorization_url"])
+
+        return HttpResponse("Payment initialization failed")
 
     return redirect("home")
 

@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'eduvote.wsgi.application'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://supermarginal-overthriftily-tonya.ngrok-free.dev",
+    "https://eduvote-perssonality.onrender.com",
 ]
 
 # Database
