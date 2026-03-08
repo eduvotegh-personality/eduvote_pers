@@ -33,7 +33,7 @@ DEBUG = os.environ.get("DEBUG", "True") == "True"
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "eduvote-perssonality.onrender.com",
+    "eduvote-pers-dzno.onrender.com",
     ".onrender.com",
 ]
 
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'eduvote.wsgi.application'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://eduvote-perssonality.onrender.com",
+    "https://eduvote-pers-dzno.onrender.com",
 ]
 
 # Database
