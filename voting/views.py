@@ -16,16 +16,24 @@ from django.shortcuts import render
 from .models import Event, Vote, Contestant
 from .models import Category
 
-#.....HUBTEL.....#
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Contestant, Payment
-from django.conf import settings
-import requests
-
+from django.http import HttpResponse
 from .models import ContactMessage
 from django.contrib import messages
 from django.core.mail import send_mail
 
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect
+from .models import Contestant, Payment
+import requests
+from django.shortcuts import render, redirect
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import Payment
+from .models import Event, Contestant, Payment
+
+from django.shortcuts import render
+from django.http import JsonResponse
 
 def event_list(request):
     now = timezone.now()
@@ -113,6 +121,7 @@ def is_admin(user):
 @login_required
 @user_passes_test(is_admin)
 def admin_dashboard(request):
+
     events = Event.objects.all()
 
     selected_event_id = request.GET.get("event_id")
@@ -122,16 +131,25 @@ def admin_dashboard(request):
     else:
         selected_event = events.first()
 
-    # Filter data per event
+    # contestants for this event
     contestants = Contestant.objects.filter(category__event=selected_event)
-    votes = Vote.objects.filter(contestant__category__event=selected_event)
 
-    total_revenue = votes.aggregate(Sum("amount"))["amount__sum"] or 0
-    total_votes = votes.aggregate(Sum("votes"))["votes__sum"] or 0
+    # successful payments for this event
+    payments = Payment.objects.filter(
+        contestant__category__event=selected_event,
+        status="successful"
+    )
+
+    # totals
+    total_revenue = payments.aggregate(Sum("amount"))["amount__sum"] or 0
+    total_votes = payments.aggregate(Sum("votes"))["votes__sum"] or 0
     total_contestants = contestants.count()
 
+    # leaderboard
     leaderboard = contestants.order_by("-total_votes")
-    recent_votes = votes.order_by("-timestamp")[:10]
+
+    # recent votes (recent successful payments)
+    recent_votes = payments.order_by("-created_at")[:10]
 
     context = {
         "events": events,
@@ -177,36 +195,51 @@ def privacy_policy(request):
 def terms_of_service(request):
     return render(request, "terms.html")
 
+
 def initiate_payment(request, contestant_id):
     contestant = get_object_or_404(Contestant, id=contestant_id)
 
     if request.method == "POST":
+
         phone = request.POST.get("phone")
+        email = request.POST.get("email")
         amount = float(request.POST.get("amount"))
 
-        # Define votes logic (example: 1 GHS = 1 vote)
         votes = int(amount)
 
         payment = Payment.objects.create(
             contestant=contestant,
             phone=phone,
             amount=amount,
-            votes=votes
+            votes=votes,
+            status="pending"
         )
 
-        # 🔥 HUBTEL INTEGRATION PLACEHOLDER
-        # When Hubtel gives credentials, replace below
+        paystack_url = "https://api.paystack.co/transaction/initialize"
 
-        hubtel_payload = {
-            "amount": amount,
-            "customerNumber": phone,
-            "description": f"Vote for {contestant.name}",
-            "callbackUrl": settings.SITE_URL + "/payment/callback/",
-            "returnUrl": settings.SITE_URL + "/payment/verify/" + str(payment.reference)
+        headers = {
+            "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+            "Content-Type": "application/json",
         }
 
-        # For now simulate redirect
-        return redirect("payment_processing", payment.reference)
+        data = {
+            "email": email,
+            "amount": int(amount * 100),
+            "reference": str(payment.reference),
+            "callback_url": f"{settings.SITE_URL}/payment/verify/{payment.reference}/",
+        }
+
+        try:
+            response = requests.post(paystack_url, json=data, headers=headers)
+            response_data = response.json()
+        except:
+            return HttpResponse("Payment initialization failed")
+
+        if response_data.get("status"):
+            payment_url = response_data["data"]["authorization_url"]
+            return redirect(payment_url)
+
+        return HttpResponse(response_data)
 
     return redirect("home")
 
@@ -214,20 +247,39 @@ def payment_processing(request, reference):
     payment = get_object_or_404(Payment, reference=reference)
     return render(request, "voting/payment_processing.html", {"payment": payment})
 
+
 def verify_payment(request, reference):
     payment = get_object_or_404(Payment, reference=reference)
 
-    # 🔥 HERE we will verify with Hubtel API later
+    verify_url = f"https://api.paystack.co/transaction/verify/{reference}"
 
-    # For now simulate success
-    payment.status = "successful"
-    payment.save()
+    headers = {
+        "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
+    }
 
-    # Add votes
-    payment.contestant.total_votes += payment.votes
-    payment.contestant.save()
+    try:
+        response = requests.get(verify_url, headers=headers)
+        response_data = response.json()
+    except:
+        return redirect("home")
 
-    return redirect("vote_success")
+    if response_data.get("status"):
+        data = response_data.get("data")
+
+        if data["status"] == "success" and payment.status != "successful":
+
+            # mark payment successful
+            payment.status = "successful"
+            payment.save()
+
+            # add votes
+            contestant = payment.contestant
+            contestant.total_votes += payment.votes
+            contestant.save()
+
+            return redirect("vote_success")
+
+    return redirect("home")
 
 def contact(request):
 
@@ -239,7 +291,6 @@ def contact(request):
         subject = request.POST.get("subject")
         message = request.POST.get("message")
 
-        # Save message
         ContactMessage.objects.create(
             name=name,
             email=email,
@@ -248,12 +299,9 @@ def contact(request):
             message=message
         )
 
-        # Send Email Notification
         send_mail(
             subject=f"New EduVote Contact: {subject}",
             message=f"""
-New Contact Message
-
 Name: {name}
 Email: {email}
 Phone: {phone}
@@ -266,8 +314,45 @@ Message:
             fail_silently=True,
         )
 
-        messages.success(request, "✅ Your message has been sent successfully!")
+        messages.success(request, "Message sent successfully!")
 
         return redirect("contact")
 
     return render(request, "contact.html")
+
+def vote_success(request):
+    return render(request, "vote_success.html")
+
+
+@login_required
+@user_passes_test(is_admin)
+def dashboard_live_data(request):
+
+    event_id = request.GET.get("event_id")
+
+    contestants = Contestant.objects.filter(category__event_id=event_id)
+
+    payments = Payment.objects.filter(
+        contestant__category__event_id=event_id,
+        status="successful"
+    )
+
+    total_revenue = payments.aggregate(Sum("amount"))["amount__sum"] or 0
+    total_votes = payments.aggregate(Sum("votes"))["votes__sum"] or 0
+
+    leaderboard = list(
+        contestants.order_by("-total_votes")
+        .values("name", "total_votes")[:10]
+    )
+
+    recent_votes = list(
+        payments.order_by("-created_at")
+        .values("phone", "contestant__name", "amount", "created_at")[:10]
+    )
+
+    return JsonResponse({
+        "total_revenue": float(total_revenue),
+        "total_votes": total_votes,
+        "leaderboard": leaderboard,
+        "recent_votes": recent_votes
+    })

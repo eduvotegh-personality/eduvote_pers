@@ -178,7 +178,7 @@ href="?event_id={{ event.id }}">
 Total Revenue
 </div>
 
-<div class="stat-number text-success">
+<div class="stat-number text-success" id="totalRevenue">
 GHS {{ total_revenue }}
 </div>
 
@@ -195,7 +195,7 @@ GHS {{ total_revenue }}
 Total Votes
 </div>
 
-<div class="stat-number text-primary">
+<div class="stat-number text-primary" id="totalVotes">
 {{ total_votes }}
 </div>
 
@@ -254,7 +254,7 @@ Total Contestants
 
 </thead>
 
-<tbody>
+<tbody id="leaderboardBody">
 
 {% for contestant in leaderboard %}
 
@@ -312,13 +312,13 @@ No contestants found for this event.
 
 </thead>
 
-<tbody>
+<tbody id="recentVotesBody">
 
 {% for vote in recent_votes %}
 
 <tr>
 
-<td>{{ vote.phone_number }}</td>
+<td>{{ vote.phone }}</td>
 
 <td>{{ vote.contestant.name }}</td>
 
@@ -326,7 +326,7 @@ No contestants found for this event.
 GHS {{ vote.amount }}
 </td>
 
-<td>{{ vote.timestamp }}</td>
+<td>{{ vote.created_at }}</td>
 
 </tr>
 
@@ -400,6 +400,28 @@ No client requests yet.
 
 </div>
 
+<script>
+    function updateDashboard(){
+
+fetch("/dashboard/live-data/?event_id={{ selected_event.id }}")
+
+.then(response => response.json())
+
+.then(data => {
+
+document.getElementById("totalRevenue").innerText =
+"GHS " + data.total_revenue;
+
+document.getElementById("totalVotes").innerText =
+data.total_votes;
+
+});
+
+}
+
+setInterval(updateDashboard, 5000);
+
+</script>
 
 <script>
 
@@ -464,6 +486,7 @@ beginAtZero: true
 }
 
 });
+
 
 </script>
 

@@ -28,12 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
 # Automatically detect environment
-DEBUG = os.environ.get("RENDER") != "true"
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-if DEBUG:
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost",]
-else:
-    ALLOWED_HOSTS = ["eduvote-perssonality.onrender.com", ".onrender.com"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "eduvote-perssonality.onrender.com",
+    ".onrender.com",
+]
 
 
 # Application definition
@@ -175,4 +177,11 @@ cloudinary.config(
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
-SITE_URL = "https://eduvote-perssonality.onrender.com"
+SITE_URL = os.environ.get(
+    "SITE_URL",
+    "http://127.0.0.1:8000"
+)
+
+PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY")
+PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY")
+PAYSTACK_CALLBACK_URL = os.getenv("PAYSTACK_CALLBACK_URL")
