@@ -39,6 +39,8 @@ import json
 import hmac
 import hashlib
 
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 def event_list(request):
@@ -428,9 +430,6 @@ def paystack_webhook(request):
     return HttpResponse(status=200)
 
 
-from django.views.decorators.csrf import csrf_exempt
-
-
 @csrf_exempt
 def ussd_callback(request):
 
@@ -444,15 +443,19 @@ def ussd_callback(request):
 
     response = ""
 
+    # FIRST MENU
     if text == "":
         response = "CON Welcome to EduVote\n"
         response += "1. Vote\n"
         response += "2. View Results"
 
+    # VOTE OPTION
     elif text == "1":
         response = "CON Enter Contestant Code"
 
+    # USER ENTERS CODE
     elif text.startswith("1*") and text.count("*") == 1:
+
         code = text.split("*")[1]
 
         try:
@@ -464,7 +467,9 @@ def ussd_callback(request):
         except Contestant.DoesNotExist:
             response = "END Invalid contestant code"
 
-    elif text.count("*") == 2:
+    # USER ENTERS NUMBER OF VOTES
+    elif text.startswith("1*") and text.count("*") == 2:
+
         parts = text.split("*")
         code = parts[1]
         votes = parts[2]
@@ -479,7 +484,9 @@ def ussd_callback(request):
         except Contestant.DoesNotExist:
             response = "END Invalid contestant"
 
+    # CONFIRM PAYMENT
     elif text.endswith("*1"):
+
         parts = text.split("*")
         code = parts[1]
         votes = parts[2]
