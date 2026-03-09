@@ -205,13 +205,14 @@ def terms_of_service(request):
 
 
 def initiate_payment(request, contestant_id):
+    
 
     contestant = get_object_or_404(Contestant, id=contestant_id)
 
     if request.method == "POST":
 
         phone = request.POST.get("phone")
-        email = "vote@eduvote.com"
+        email = f"{phone}@eduvote.com"
         amount = float(request.POST.get("amount"))
 
         votes = int(amount)
@@ -249,6 +250,7 @@ def initiate_payment(request, contestant_id):
         try:
             response = requests.post(url, json=payload, headers=headers, timeout=30)
             response_data = response.json()
+
         except requests.exceptions.RequestException:
             return HttpResponse("Unable to reach payment gateway. Try again.")
 
