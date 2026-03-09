@@ -209,7 +209,7 @@ def initiate_payment(request, contestant_id):
     if request.method == "POST":
 
         phone = request.POST.get("phone")
-        email = request.POST.get("email")
+        email = "vote@eduvote.com"
         amount = float(request.POST.get("amount"))
 
         votes = int(amount)
@@ -257,7 +257,7 @@ def initiate_payment(request, contestant_id):
 
             return redirect(response_data["data"]["authorization_url"])
 
-        return HttpResponse("Payment initialization failed")
+        return HttpResponse(f"Payment initialization failed: {response_data}")
 
     return redirect("home")
 
@@ -317,7 +317,7 @@ def contact(request):
     if request.method == "POST":
 
         name = request.POST.get("name")
-        email = f"{phone}@eduvote.com"
+        email = "vote@eduvote.com.gh"
         phone = request.POST.get("phone")
         subject = request.POST.get("subject")
         message = request.POST.get("message")
