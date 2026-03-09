@@ -317,7 +317,7 @@ def contact(request):
     if request.method == "POST":
 
         name = request.POST.get("name")
-        email = request.POST.get("email")
+        email = f"{phone}@eduvote.com"
         phone = request.POST.get("phone")
         subject = request.POST.get("subject")
         message = request.POST.get("message")
