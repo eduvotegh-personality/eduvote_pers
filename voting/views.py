@@ -426,3 +426,73 @@ def paystack_webhook(request):
             pass
 
     return HttpResponse(status=200)
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def ussd_callback(request):
+
+    if request.method != "POST":
+        return HttpResponse("USSD endpoint ready", content_type="text/plain")
+
+    session_id = request.POST.get("sessionId")
+    service_code = request.POST.get("serviceCode")
+    phone_number = request.POST.get("phoneNumber")
+    text = request.POST.get("text", "")
+
+    response = ""
+
+    if text == "":
+        response = "CON Welcome to EduVote\n"
+        response += "1. Vote\n"
+        response += "2. View Results"
+
+    elif text == "1":
+        response = "CON Enter Contestant Code"
+
+    elif text.startswith("1*") and text.count("*") == 1:
+        code = text.split("*")[1]
+
+        try:
+            contestant = Contestant.objects.get(code=code)
+
+            response = f"CON {contestant.name}\n"
+            response += "Enter number of votes"
+
+        except Contestant.DoesNotExist:
+            response = "END Invalid contestant code"
+
+    elif text.count("*") == 2:
+        parts = text.split("*")
+        code = parts[1]
+        votes = parts[2]
+
+        try:
+            contestant = Contestant.objects.get(code=code)
+
+            response = f"CON Vote {votes} for {contestant.name}?\n"
+            response += "1. Confirm\n"
+            response += "2. Cancel"
+
+        except Contestant.DoesNotExist:
+            response = "END Invalid contestant"
+
+    elif text.endswith("*1"):
+        parts = text.split("*")
+        code = parts[1]
+        votes = parts[2]
+
+        try:
+            contestant = Contestant.objects.get(code=code)
+
+            response = "END Thank you. You will receive a MoMo prompt to complete payment."
+
+        except Contestant.DoesNotExist:
+            response = "END Contestant not found"
+
+    else:
+        response = "END Invalid option"
+
+    return HttpResponse(response, content_type="text/plain")
