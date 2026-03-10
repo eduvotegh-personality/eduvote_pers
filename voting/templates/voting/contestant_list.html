@@ -242,12 +242,16 @@ data-bs-parent="#categoryAccordion">
 
 <h5 class="fw-bold">{{ contestant.name }}</h5>
 
-<a
-href="https://api.whatsapp.com/send?text=Vote%20for%20{{ contestant.name|urlencode }}%20in%20{{ event.title|urlencode }}%20on%20EduVote%20{{ request.build_absolute_uri|urlencode }}"
-target="_blank"
-class="btn btn-outline-success btn-sm mb-2">
+<p class="text-muted small">
+Ask friends to support you by sharing your voting link.
+</p>
 
-Share on WhatsApp
+<a
+href="https://api.whatsapp.com/send?text=Support%20{{ contestant.name|urlencode }}%20in%20the%20{{ event.title|urlencode }}!%0A%0AVote%20here:%20{{ request.build_absolute_uri|urlencode }}%0A%0AEvery%20vote%20counts%20🙏"
+target="_blank"
+class="btn btn-success btn-sm mb-2">
+
+📢 Share & Earn Votes
 
 </a>
 
