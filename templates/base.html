@@ -15,6 +15,20 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <meta name="description" content="EduVote is a secure online election platform for schools, organizations, and institutions.">
+
+    <meta property="og:title" content="EduVote – Secure Online Voting Platform">
+    <meta property="og:description" content="Run elections online with transparency and security using EduVote.">
+    <meta property="og:image" content="https://eduvote-pers-dzno.onrender.com/static/images/eduvote-logo.png">
+    <meta property="og:url" content="https://eduvote-pers-dzno.onrender.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="EduVote">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EduVote – Secure Online Voting Platform">
+    <meta name="twitter:description" content="Run elections online with transparency and security using EduVote.">
+    <meta name="twitter:image" content="https://eduvote-pers-dzno.onrender.com/static/images/eduvote-logo.png">
+
 <style>
 
 body{
@@ -144,8 +158,12 @@ footer a:hover{
         <div class="container">
 
             <!-- Brand -->
-            <a class="navbar-brand" href="{% url 'homepage' %}">
-                🎀 EduVote
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'homepage' %}">
+                <img src="{% static 'images/eduvote-logo.png' %}" 
+                    alt="EduVote Logo" 
+                    height="30">
+
+                <span>EduVote</span>
             </a>
 
             <!-- Mobile Toggle -->

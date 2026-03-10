@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import Event, Category, Contestant, Vote, Payment, ContactMessage
 
 
+admin.site.site_header = "EduVote Administration"
+admin.site.site_title = "EduVote Admin"
+admin.site.index_title = "Welcome to EduVote Management"
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("title", "start_date", "end_date")
