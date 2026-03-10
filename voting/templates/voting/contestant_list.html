@@ -2,6 +2,42 @@
 
 {% block title %}{{ event.title }}{% endblock %}
 
+{% block meta_description %}
+Vote in {{ event.title }} on EduVote. Support your favorite contestant and vote securely online.
+{% endblock %}
+
+{% block og_title %}
+Vote in {{ event.title }} | EduVote
+{% endblock %}
+
+{% block og_description %}
+Participate in the {{ event.title }} election and vote for your favorite contestant securely.
+{% endblock %}
+
+{% block og_image %}
+{% if event.image %}
+{{ event.image.url }}
+{% else %}
+https://eduvote-pers-dzno.onrender.com/static/images/eduvote-logo.png
+{% endif %}
+{% endblock %}
+
+{% block twitter_title %}
+Vote in {{ event.title }} | EduVote
+{% endblock %}
+
+{% block twitter_description %}
+Support your favorite contestant in {{ event.title }} and vote securely online.
+{% endblock %}
+
+{% block twitter_image %}
+{% if event.image %}
+{{ event.image.url }}
+{% else %}
+https://eduvote-pers-dzno.onrender.com/static/images/eduvote-logo.png
+{% endif %}
+{% endblock %}
+
 {% block content %}
 
 <style>
@@ -205,6 +241,15 @@ data-bs-parent="#categoryAccordion">
 {% endif %}
 
 <h5 class="fw-bold">{{ contestant.name }}</h5>
+
+<a
+href="https://wa.me/?text=Vote%20for%20{{ contestant.name }}%20in%20{{ event.title }}%20on%20EduVote%20{{ request.build_absolute_uri }}"
+target="_blank"
+class="btn btn-outline-success btn-sm mb-2">
+
+Share on WhatsApp
+
+</a>
 
 <div class="code-badge">
 Code: {{ contestant.code }}
