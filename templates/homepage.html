@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}EduVote - Secure Online Voting{% endblock %}
 
 {% block content %}
@@ -47,15 +48,46 @@ margin-bottom:10px;
 /* CTA SECTION */
 
 .cta-section{
-background:linear-gradient(90deg,#c8102e,#ff4b5c);
+
+background:
+linear-gradient(rgba(200,16,46,0.85), rgba(200,16,46,0.85)),
+url("/static/images/voting-animation.jpg");
+
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+
 color:white;
-padding:60px 20px;
+padding:150px 20px;
 border-radius:16px;
 text-align:center;
+
+animation:ctaFloat 8s ease-in-out infinite alternate;
+
 }
 
-.cta-section h3{
-font-weight:700;
+/* subtle background animation */
+
+@keyframes ctaFloat{
+
+0%{
+background-position:center;
+}
+
+100%{
+background-position:top;
+}
+
+}
+
+.cta-section .btn{
+font-weight:600;
+padding:12px 30px;
+transition:0.3s;
+}
+
+.cta-section .btn:hover{
+transform:scale(1.05);
 }
 
 /* BUTTON STYLE */
@@ -86,14 +118,28 @@ font-size:32px;
 
 }
 
+.hero-election{
+background:
+linear-gradient(rgba(11,30,60,0.85), rgba(11,30,60,0.85)),
+url("/static/images/voting-animation.jpg");
+
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+
+color:white;
+padding:150px 20px;
+border-radius:16px;
+}
+
 </style>
 
 
 <!-- HERO SECTION -->
 
-<section class="hero-election text-center mb-5">
+<section class="hero-election mb-5">
 
-<div class="container">
+<div class="container text-center">
 
 <h1 class="display-4">
 Secure Digital Voting Platform
@@ -119,7 +165,6 @@ Start an Election
 </div>
 
 </section>
-
 
 <!-- FEATURES -->
 
@@ -200,7 +245,7 @@ transaction verification and complete audit logs.
 
 <section class="cta-section">
 
-<div class="container">
+<div class="container text-center">
 
 <h3>
 Launch Your Election With EduVote

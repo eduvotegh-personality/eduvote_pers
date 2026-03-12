@@ -3,9 +3,52 @@
 
 {% block content %}
 
+<style>
+    /* ABOUT HERO */
+
+.about-hero{
+
+background:
+linear-gradient(rgba(11,30,60,0.88), rgba(11,30,60,0.88)),
+url("/static/images/voting-animation.jpg");
+
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+
+color:white;
+padding:110px 20px;
+
+animation:heroMove 10s ease-in-out infinite alternate;
+
+}
+
+/* subtle animated background movement */
+
+@keyframes heroMove{
+
+0%{
+background-position:center;
+}
+
+100%{
+background-position:top;
+}
+
+}
+
+/* limit paragraph width */
+
+.hero-text{
+max-width:700px;
+margin:auto;
+opacity:0.9;
+}
+</style>
+
 <!-- HERO SECTION -->
 
-<section style="background:linear-gradient(135deg,#0b1e3c,#132c5c);color:white;padding:90px 0;">
+<section class="about-hero">
 
 <div class="container text-center">
 
@@ -17,7 +60,7 @@ Online Voting Infrastructure
 For Schools and Institutions
 </h2>
 
-<p class="lead" style="max-width:700px;margin:auto;">
+<p class="lead hero-text">
 EduVote is a modern digital voting platform designed
 to power transparent elections, competitions and
 personality awards across institutions.
